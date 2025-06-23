@@ -1,2 +1,2 @@
 # Dice-Roller-Tabletop-Google-Slides
-A dice roller script for google slides for people that want to play tabletop games with others
+I wanted to play some tabletop games with my friends, and google slides was a good choice for all of us, but it did not have a built in dice roller. That's why I decided to try and make my own.
