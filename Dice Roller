@@ -1,0 +1,214 @@
+function onOpen() {
+  SlidesApp.getUi()
+    .createMenu("Dice Roller")
+    .addItem("Roll d4 (Single)", "rollD4Single")
+    .addItem("Roll d6 (Single)", "rollD6Single")
+    .addItem("Roll d8 (Single)", "rollD8Single")
+    .addItem("Roll d10 (Single)", "rollD10Single")
+    .addItem("Roll d12 (Single)", "rollD12Single")
+    .addItem("Roll d20 (Single)", "rollD20Single")
+    .addItem("Roll d4 (Multiple)", "rollD4Multiple")
+    .addItem("Roll d6 (Multiple)", "rollD6Multiple")
+    .addItem("Roll d8 (Multiple)", "rollD8Multiple")
+    .addItem("Roll d10 (Multiple)", "rollD10Multiple")
+    .addItem("Roll d12 (Multiple)", "rollD12Multiple")
+    .addItem("Roll d20 (Multiple)", "rollD20Multiple")
+    .addToUi();
+}
+
+function getHowManyDie() {
+  const ui = SlidesApp.getUi();
+  const response = ui.prompt("How many to roll?", "Enter number:", ui.ButtonSet.OK_CANCEL);
+  if (response.getSelectedButton() === ui.Button.OK) {
+    return response.getResponseText();
+  } else {
+    return null;
+  }
+}
+
+function rollDie(sides) {
+  return Math.floor(Math.random() * sides) + 1;
+}
+
+function insertRollResult(die, value, number) {
+  const slide = SlidesApp.getActivePresentation().getSelection().getCurrentPage();
+  if (!slide) {
+    SlidesApp.getUi().alert("Please select a slide to insert the roll result.");
+    return;
+  }
+
+  const elements = slide.getPageElements();
+  for (let i = 0; i < elements.length; i++) {
+    const element = elements[i];
+    if (element.getPageElementType() === SlidesApp.PageElementType.SHAPE) {
+      const shape = element.asShape();
+      const text = shape.getText().asString();
+      if (text.includes("🍀🎲 Dice Roll")) {
+        shape.remove();
+      }
+    }
+  }
+
+  const roll_values = value.join(", ")
+  const text = `🍀🎲 Dice Roll (${number}d${die}): ${roll_values} 🎲🍀`;
+  const box = slide.insertTextBox(text).setLeft(0).setTop(0-30).setWidth(SlidesApp.getActivePresentation().getPageWidth()).setHeight(25);
+
+  const textObject = box.getText().getTextStyle();
+  textObject.setBackgroundColor("#000000");
+  textObject.setFontFamily("Book Antiqua");
+  textObject.setItalic(true);
+  textObject.setForegroundColor("#FFFFFF");
+  textObject.setFontSize(18)
+
+  // apply bold ONLY to "Roll d"
+  const boldStart = box.getText().asString().indexOf("Dice Roll");
+  const boldEnd = boldStart + "Dice Roll".length;
+
+  if (boldStart !== -1) {
+    box.getText().getRange(boldStart,boldEnd).getTextStyle().setBold(true);
+    box.getText().getRange(boldStart,boldEnd).getTextStyle().setForegroundColor("#FFFF00");
+  }  
+
+}
+
+// Single Roll
+
+function rollD4Single() {
+
+  const roll_list = []
+  const result = rollDie(4)
+  const number = 1
+  roll_list.push(result)
+
+  insertRollResult(4, roll_list, number);
+}
+
+function rollD6Single() {
+
+  const roll_list = []
+  const result = rollDie(6)
+  const number = 1
+  roll_list.push(result)
+
+  insertRollResult(6, roll_list, number);
+}
+
+function rollD8Single() {
+
+  const roll_list = []
+  const result = rollDie(8)
+  const number = 1
+  roll_list.push(result)
+
+  insertRollResult(8, roll_list, number);
+}
+
+function rollD10Single() {
+
+  const roll_list = []
+  const result = rollDie(10)
+  const number = 1
+  roll_list.push(result)
+
+  insertRollResult(10, roll_list, number);
+}
+
+function rollD12Single() {
+
+  const roll_list = []
+  const result = rollDie(12)
+  const number = 1
+  roll_list.push(result)
+
+  insertRollResult(12, roll_list, number);
+}
+
+function rollD20Single() {
+
+  const roll_list = []
+  const result = rollDie(20)
+  const number = 1
+  roll_list.push(result)
+
+  insertRollResult(20, roll_list, number);
+}
+
+// Multiple Roll
+
+function rollD4Multiple() {
+  const number = getHowManyDie();
+  if (!number) return;
+
+  const roll_list = []
+  for (let i = 0; i < number; i++){
+    const result = rollDie(4)
+    roll_list.push(result)
+  }
+
+  insertRollResult(4, roll_list, number);
+}
+
+function rollD6Multiple() {
+  const number = getHowManyDie();
+  if (!number) return;
+
+  const roll_list = []
+  for (let i = 0; i < number; i++){
+    const result = rollDie(6)
+    roll_list.push(result)
+  }
+
+  insertRollResult(6, roll_list, number);
+}
+
+function rollD8Multiple() {
+  const number = getHowManyDie();
+  if (!number) return;
+
+  const roll_list = []
+  for (let i = 0; i < number; i++){
+    const result = rollDie(8)
+    roll_list.push(result)
+  }
+
+  insertRollResult(8, roll_list, number);
+}
+
+function rollD10Multiple() {
+  const number = getHowManyDie();
+  if (!number) return;
+
+  const roll_list = []
+  for (let i = 0; i < number; i++){
+    const result = rollDie(10)
+    roll_list.push(result)
+  }
+
+  insertRollResult(10, roll_list, number);
+}
+
+function rollD12Multiple() {
+  const number = getHowManyDie();
+  if (!number) return;
+
+  const roll_list = []
+  for (let i = 0; i < number; i++){
+    const result = rollDie(12)
+    roll_list.push(result)
+  }
+
+  insertRollResult(12, roll_list, number);
+}
+
+function rollD20Multiple() {
+  const number = getHowManyDie();
+  if (!number) return;
+
+  const roll_list = []
+  for (let i = 0; i < number; i++){
+    const result = rollDie(20)
+    roll_list.push(result)
+  }
+
+  insertRollResult(20, roll_list, number);
+}
