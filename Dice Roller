@@ -20,7 +20,11 @@ function getHowManyDie() {
   const ui = SlidesApp.getUi();
   const response = ui.prompt("How many to roll?", "Enter number:", ui.ButtonSet.OK_CANCEL);
   if (response.getSelectedButton() === ui.Button.OK) {
-    return response.getResponseText();
+    var answer = response.getResponseText()
+    if (answer > 20){
+      answer = 20
+    }
+    return answer;
   } else {
     return null;
   }
@@ -38,37 +42,83 @@ function insertRollResult(die, value, number) {
   }
 
   const elements = slide.getPageElements();
+
+  let has_counter = false;
+  let counter_value = 0;
+
   for (let i = 0; i < elements.length; i++) {
     const element = elements[i];
+
     if (element.getPageElementType() === SlidesApp.PageElementType.SHAPE) {
       const shape = element.asShape();
       const text = shape.getText().asString();
+
+      // Remove old dice roll text box
       if (text.includes("🍀🎲 Dice Roll")) {
         shape.remove();
+        continue;
+      }
+
+      // Handle Roll Counter
+      if (text.includes("Times Used")) {
+        has_counter = true;
+
+        // Parse integer value after colon
+        const colonIndex = text.indexOf(":");
+        if (colonIndex !== -1) {
+          const counterString = text.substring(colonIndex + 1).trim();
+          const parsed = parseInt(counterString);
+          if (!isNaN(parsed)) {
+            counter_value = parsed + 1;
+          }
+        }
+
+        // Remove the old counter box
+        shape.remove();
+        continue;
       }
     }
   }
 
-  const roll_values = value.join(", ")
+  // Format the dice roll result
+  const roll_values = value.join(", ");
   const text = `🍀🎲 Dice Roll (${number}d${die}): ${roll_values} 🎲🍀`;
-  const box = slide.insertTextBox(text).setLeft(0).setTop(0-30).setWidth(SlidesApp.getActivePresentation().getPageWidth()).setHeight(25);
+  const rollBox = slide.insertTextBox(text)
+    .setLeft(0)
+    .setTop(-30)
+    .setWidth(SlidesApp.getActivePresentation().getPageWidth())
+    .setHeight(25);
 
-  const textObject = box.getText().getTextStyle();
-  textObject.setBackgroundColor("#000000");
-  textObject.setFontFamily("Book Antiqua");
-  textObject.setItalic(true);
-  textObject.setForegroundColor("#FFFFFF");
-  textObject.setFontSize(18)
+  const textStyle = rollBox.getText().getTextStyle();
+  textStyle.setBackgroundColor("#000000");
+  textStyle.setFontFamily("Book Antiqua");
+  textStyle.setItalic(true);
+  textStyle.setForegroundColor("#FFFFFF");
+  textStyle.setFontSize(18);
 
-  // apply bold ONLY to "Roll d"
-  const boldStart = box.getText().asString().indexOf("Dice Roll");
+  // Highlight "Dice Roll" in yellow and bold
+  const boldStart = rollBox.getText().asString().indexOf("Dice Roll");
   const boldEnd = boldStart + "Dice Roll".length;
-
   if (boldStart !== -1) {
-    box.getText().getRange(boldStart,boldEnd).getTextStyle().setBold(true);
-    box.getText().getRange(boldStart,boldEnd).getTextStyle().setForegroundColor("#FFFF00");
-  }  
+    const range = rollBox.getText().getRange(boldStart, boldEnd);
+    range.getTextStyle().setBold(true);
+    range.getTextStyle().setForegroundColor("#FFFF00");
+  }
 
+  // Add the roll counter
+  const rollCounterText = `Times Used: ${counter_value}`;
+  const counterBox = slide.insertTextBox(rollCounterText)
+    .setLeft(0)
+    .setTop(-30-25)
+    .setWidth(SlidesApp.getActivePresentation().getPageWidth())
+    .setHeight(25);
+
+  const counterStyle = counterBox.getText().getTextStyle();
+  counterStyle.setBackgroundColor("#000000");
+  counterStyle.setFontFamily("Book Antiqua");
+  counterStyle.setItalic(true);
+  counterStyle.setForegroundColor("#FFFFFF");
+  counterStyle.setFontSize(18);
 }
 
 // Single Roll
